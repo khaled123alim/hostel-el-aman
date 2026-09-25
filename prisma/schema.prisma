@@ -1,0 +1,546 @@
+// Hostel Reservation Platform — Prisma schema
+// SQLite by default for zero-setup local dev; switch provider to "postgresql"
+// and update DATABASE_URL for production. See README.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum RoleName {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  RECEPTIONIST
+  CUSTOMER
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+  PENDING
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  NO_SHOW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentMethod {
+  CARD
+  STRIPE
+  PAYPAL
+  PAY_AT_HOSTEL
+  BANK_TRANSFER
+}
+
+enum RoomType {
+  DORMITORY
+  PRIVATE
+  DOUBLE
+  TWIN
+  TRIPLE
+  FAMILY
+  SUITE
+}
+
+enum BedType {
+  SINGLE
+  DOUBLE
+  QUEEN
+  KING
+  BUNK
+  SOFA
+}
+
+enum BathroomType {
+  PRIVATE
+  SHARED
+  ENSUITE
+}
+
+enum RoomStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum AvailabilityStatus {
+  OPEN
+  CLOSED
+  BLOCKED
+}
+
+enum HousekeepingStatus {
+  CLEAN
+  DIRTY
+  CLEANING
+  INSPECTED
+  OUT_OF_ORDER
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  HIDDEN
+  REJECTED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum BookingSource {
+  WEB
+  WALK_IN
+  ADMIN
+  PHONE
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED
+}
+
+enum RefundStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+// ---------------------------------------------------------------------------
+// RBAC
+// ---------------------------------------------------------------------------
+
+model Role {
+  id          String       @id @default(cuid())
+  name        RoleName     @unique
+  isSystem    Boolean      @default(true)
+  description String?
+  permissions Permission[] @relation("RolePermissions")
+  users       User[]
+}
+
+model Permission {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  module      String
+  action      String
+  description String?
+  roles       Role[]  @relation("RolePermissions")
+}
+
+// ---------------------------------------------------------------------------
+// Users
+// ---------------------------------------------------------------------------
+
+model User {
+  id                    String        @id @default(cuid())
+  email                 String        @unique
+  emailVerified         Boolean       @default(false)
+  emailVerifiedAt       DateTime?
+  passwordHash          String
+  firstName             String
+  lastName              String
+  phone                 String?
+  country               String?
+  locale                String        @default("en")
+  currency              String        @default("EUR")
+  avatar                String?
+  status                UserStatus    @default(ACTIVE)
+  provider              String?       // email | google
+  authProviderId        String?
+  roleId                String
+  role                  Role          @relation(fields: [roleId], references: [id])
+  lastLoginAt           DateTime?
+  failedLoginAttempts   Int           @default(0)
+  lockedUntil           DateTime?
+  resetTokenHash        String?
+  resetTokenExpiry      DateTime?
+  verifyTokenHash       String?
+  verifyTokenExpiry     DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  reservations Reservation[]
+  reviews      Review[]
+  payments     Payment[]
+  refunds      Refund[]
+  auditLogs    AuditLog[]
+  notes        ReservationNote[]
+  notifications Notification[]
+
+  @@index([email])
+  @@index([roleId])
+}
+
+// ---------------------------------------------------------------------------
+// Hostels
+// ---------------------------------------------------------------------------
+
+model Hostel {
+  id             String         @id @default(cuid())
+  slug           String         @unique
+  name           String
+  description    String
+  address        String
+  city           String
+  country        String
+  latitude       Float
+  longitude      Float
+  phone          String?
+  email          String?
+  website        String?
+  checkInTime    String         @default("14:00")
+  checkOutTime   String         @default("11:00")
+  imageCover     String
+  images         Json           @default("[]")
+  houseRules     Json           @default("[]")
+  ratingAvg      Float          @default(0)
+  reviewCount    Int            @default(0)
+  seoTitle       String?
+  metaDescription String?
+  ogImage        String?
+  status         String         @default("ACTIVE") // ACTIVE | INACTIVE
+  featured       Boolean        @default(false)
+  amenities      HostelAmenity[]
+  rooms          Room[]
+  reservations   Reservation[]
+  reviews        Review[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([city])
+  @@index([status])
+}
+
+model HostelAmenity {
+  id       String @id @default(cuid())
+  hostelId String
+  hostel   Hostel @relation(fields: [hostelId], references: [id], onDelete: Cascade)
+  name     String
+  icon     String? // lucide icon name
+}
+
+// ---------------------------------------------------------------------------
+// Rooms
+// ---------------------------------------------------------------------------
+
+model Room {
+  id               String             @id @default(cuid())
+  hostelId         String
+  hostel           Hostel             @relation(fields: [hostelId], references: [id], onDelete: Cascade)
+  name             String
+  number           String
+  type             RoomType
+  description      String?
+  capacity         Int
+  beds             Int
+  bedType          BedType
+  bathroomType     BathroomType
+  pricePerNight    Float
+  cleaningFee      Float             @default(0)
+  taxRate          Float             @default(0)
+  amenities        RoomAmenity[]
+  images           Json              @default("[]")
+  status           RoomStatus        @default(ACTIVE)
+  minStay          Int               @default(1)
+  maxStay          Int               @default(30)
+  housekeepingStatus HousekeepingStatus @default(CLEAN)
+  housekeepingNote String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  availability  RoomAvailability[]
+  reservations  Reservation[]
+
+  @@index([hostelId])
+  @@index([type])
+  @@index([status])
+}
+
+model RoomAmenity {
+  id     String @id @default(cuid())
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  name   String
+  icon   String?
+}
+
+// Availability: per-date records (open / closed / blocked)
+// "OPEN" entries are only created when the pattern is interrupted or overridden
+// (e.g. closing a date range writes CLOSED rows for each date in range).
+model RoomAvailability {
+  id           String             @id @default(cuid())
+  roomId       String
+  room         Room               @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  date         DateTime
+  status       AvailabilityStatus @default(OPEN)
+  priceOverride Float?
+  reason       String?
+  createdAt    DateTime           @default(now())
+
+  @@unique([roomId, date])
+  @@index([date])
+}
+
+// ---------------------------------------------------------------------------
+// Reservations
+// ---------------------------------------------------------------------------
+
+model Reservation {
+  id            String            @id @default(cuid())
+  number        String            @unique
+  customerId    String
+  customer      User              @relation(fields: [customerId], references: [id])
+  hostelId      String
+  hostel        Hostel            @relation(fields: [hostelId], references: [id])
+  roomId        String
+  room          Room              @relation(fields: [roomId], references: [id])
+  checkIn       DateTime
+  checkOut      DateTime
+  nights        Int
+  roomsCount    Int               @default(1)
+  guests        Int
+  pricePerNight Float
+  subtotal      Float
+  taxes         Float             @default(0)
+  fees          Float             @default(0)
+  discount      Float             @default(0)
+  total         Float
+  currency      String            @default("EUR")
+  status        ReservationStatus @default(PENDING)
+  paymentStatus PaymentStatus     @default(PENDING)
+  paymentMethod PaymentMethod?
+  specialRequests String?
+  promoCode     String?
+  promotionId   String?
+  promotion     Promotion?        @relation(fields: [promotionId], references: [id])
+  bookingSource BookingSource     @default(WEB)
+  cancellationPolicy String?
+  checkInCode   String?
+  checkedInAt   DateTime?
+  checkedOutAt  DateTime?
+  cancelledAt   DateTime?
+  cancelReason  String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  guestsOverride ReservationGuest[]
+  payments    Payment[]
+  history     ReservationHistory[]
+  notes       ReservationNote[]
+  review      Review?
+
+  @@index([customerId])
+  @@index([hostelId])
+  @@index([roomId])
+  @@index([checkIn])
+  @@index([checkOut])
+  @@index([status])
+  @@index([paymentStatus])
+}
+
+model ReservationGuest {
+  id            String      @id @default(cuid())
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  fullName      String
+  age           Int?
+}
+
+model ReservationHistory {
+  id            String      @id @default(cuid())
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  action        String
+  detail        String?
+  createdAt     DateTime    @default(now())
+}
+
+model ReservationNote {
+  id            String      @id @default(cuid())
+  reservationId String
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  authorId      String
+  author        User        @relation(fields: [authorId], references: [id])
+  content       String
+  isInternal    Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Payments
+// ---------------------------------------------------------------------------
+
+model Payment {
+  id            String        @id @default(cuid())
+  reservationId String
+  reservation   Reservation   @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  customerId    String
+  customer      User          @relation(fields: [customerId], references: [id])
+  amount        Float
+  currency      String        @default("EUR")
+  method        PaymentMethod
+  provider      String?       // stripe | paypal | local
+  transactionId String?       // external gateway id
+  status        PaymentStatus @default(PENDING)
+  cardLast4     String?
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+
+  refunds Refund[]
+
+  @@index([reservationId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Refund {
+  id          String       @id @default(cuid())
+  paymentId   String
+  payment     Payment      @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  amount      Float
+  currency    String       @default("EUR")
+  reason      String?
+  status      RefundStatus @default(PENDING)
+  processedById String?
+  processedBy User?        @relation(fields: [processedById], references: [id])
+  createdAt   DateTime     @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Reviews
+// ---------------------------------------------------------------------------
+
+model Review {
+  id            String       @id @default(cuid())
+  reservationId String       @unique
+  reservation   Reservation  @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  hostelId      String
+  hostel        Hostel       @relation(fields: [hostelId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  rating        Int
+  comment       String?
+  cleanliness   Int
+  location      Int
+  staff         Int
+  comfort       Int
+  facilities    Int
+  status        ReviewStatus @default(PENDING)
+  adminNote     String?
+  createdAt     DateTime     @default(now())
+
+  @@index([hostelId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Promotions
+// ---------------------------------------------------------------------------
+
+model Promotion {
+  id                String         @id @default(cuid())
+  name              String
+  code              String         @unique
+  type              PromotionType  @default(PERCENTAGE)
+  value             Float
+  fixedDiscount     Float          @default(0)
+  minNights         Int            @default(1)
+  minAmount         Float?
+  maxUses           Int?
+  usedCount         Int            @default(0)
+  startDate         DateTime
+  endDate           DateTime
+  applicableHostels String         @default("[]") // JSON array of hostel ids; empty = all
+  applicableRooms   String         @default("[]") // JSON array of room ids; empty = all
+  status            String         @default("ACTIVE") // ACTIVE | INACTIVE
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  reservations Reservation[]
+
+  @@index([code])
+}
+
+// ---------------------------------------------------------------------------
+// Notifications & Emails
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType @default(INFO)
+  title     String
+  content   String?
+  link      String?
+  read      Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read])
+}
+
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  key       String   // welcome, verify_email, reset_password, reservation_confirmed, ...
+  locale    String   @default("en")
+  subject   String
+  body      String   // supports {{placeholders}}
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([key, locale])
+}
+
+// ---------------------------------------------------------------------------
+// Audit & Settings
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  actorName  String?  // snapshot of actor's name in case the user is deleted
+  action     String
+  objectType String
+  objectId   String?
+  detail     String?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([objectType, objectId])
+  @@index([createdAt])
+}
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  group     String   @default("general")
+  updatedAt DateTime @updatedAt
+}

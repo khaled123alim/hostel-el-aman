@@ -1,0 +1,62 @@
+
+> stayhub-hostel-platform@1.0.0 dev
+> next dev
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\LAPTA\package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * C:\Users\LAPTA\Downloads\site for aman\package-lock.json
+
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.52.1:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 12.3s
+ ○ Compiling /book/[slug] ...
+ ✓ Compiled /book/[slug] in 30.2s (2811 modules)
+ ✓ Compiled in 13.8s (980 modules)
+ ✓ Compiled in 2.8s (966 modules)
+ GET /book/hostel-el-aman 307 in 66928ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 18.1s (2824 modules)
+ GET /login?next=%2Fbook%2Fhostel-el-aman%3F 200 in 29856ms
+ ○ Compiling /admin/reservations/new ...
+ ✓ Compiled /admin/reservations/new in 9.6s (2840 modules)
+ GET /admin/reservations/new 307 in 12339ms
+ GET /login 200 in 1628ms
+ GET /login 307 in 646ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 1834ms (2859 modules)
+ GET /admin 200 in 3722ms
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 3.2s (2891 modules)
+ POST /api/auth/login 200 in 5348ms
+ GET /admin/reservations/new 200 in 2233ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 6.7s (2879 modules)
+ GET /login 404 in 9305ms
+ ○ Compiling /api/auth/login ...
+ ✓ Compiled /api/auth/login in 1525ms (1903 modules)
+ POST /api/auth/login 200 in 3467ms
+ GET /admin/reservations/new 200 in 2174ms
+ GET /login 200 in 482ms
+ GET /admin/reservations/new 307 in 232ms
+ GET /login 200 in 360ms
+ GET /login 307 in 693ms
+ GET /admin 200 in 1156ms
+ POST /api/auth/login 200 in 898ms
+ GET /admin/reservations/new 200 in 1748ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\LAPTA\Downloads\site for aman\.next\cache\webpack\client-development\8.pack.gz_' -> 'C:\Users\LAPTA\Downloads\site for aman\.next\cache\webpack\client-development\8.pack.gz'
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 202.2s (2696 modules)
+ GET /admin/reservations/new 200 in 35790ms
+ ✓ Compiled in 3.7s (997 modules)
+ ✓ Compiled in 2.1s (997 modules)
+ ✓ Compiled in 1095ms (997 modules)
+ ✓ Compiled in 968ms (997 modules)
+ ✓ Compiled in 25.3s (2696 modules)

@@ -1,0 +1,19 @@
+ADMIN LOGINS — Hostel El Aman
+=============================
+(defined in prisma/seed.ts, password override in .env: SEED_ADMIN_PASSWORD)
+
+Owner (gets reservation emails):
+  email:    owner@hostelelaman.dz
+  password: Admin@12345
+
+Admin (legacy demo admin):
+  email:    admin@stayhub.com
+  password: Admin@12345
+
+Demo customer (optional):
+  email:    <customer>@demo.hostelelaman.dz   (e.g. sophie.something.5@demo.hostelelaman.dz, listed in DB)
+  password: Customer@123
+
+Notes:
+  - Admin login page: /admin
+  - If you change SEED_ADMIN_PASSWORD in .env, re-run: npm run db:seed

@@ -1,13 +1,13 @@
 // Hostel Reservation Platform — Prisma schema
-// SQLite by default for zero-setup local dev; switch provider to "postgresql"
-// and update DATABASE_URL for production. See README.md.
+// PostgreSQL for development and production (works on Vercel).
+// Set DATABASE_URL to a Postgres connection string (e.g. Neon, Supabase, RDS).
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 

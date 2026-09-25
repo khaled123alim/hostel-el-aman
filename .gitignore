@@ -23,13 +23,33 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
+.env.local
 .env*.local
+!.env.example
+.env.production
+.env.development
+
+# local logs & scratch
+dev-server.log
+seed.log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# scratch/dev scripts
+*.tsbuildinfo
+admin-login.txt
+db-check.*
+cdp-test.mjs
+check-db.ts
+resolve-share.mjs
 
 # vercel
 .vercel
 
 # typescript
-*.tsbuildinfo
 next-env.d.ts
 
 # database

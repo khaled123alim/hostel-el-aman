@@ -8,7 +8,8 @@ const SESSION_COOKIE = "sh_session";
 const SESSION_SECRET = new TextEncoder().encode(
   process.env.AUTH_SECRET ?? "insecure-dev-secret-change-me"
 );
-export const SESSION_HOURS = Number(process.env.AUTH_SESSION_HOURS ?? 168);
+const parsedSessionHours = Number(String(process.env.AUTH_SESSION_HOURS ?? "168").replace(/["']/g, "").trim());
+export const SESSION_HOURS = Number.isFinite(parsedSessionHours) && parsedSessionHours >= 1 ? parsedSessionHours : 168;
 
 export interface SessionPayload {
   sub: string;

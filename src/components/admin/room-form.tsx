@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useI18n } from "@/components/providers/i18n-provider";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { NativeSelect } from "@/components/ui/native-select";
 
 const TYPES = ["DORMITORY", "PRIVATE", "DOUBLE", "TWIN", "TRIPLE", "FAMILY", "SUITE"];
 const BEDS = ["SINGLE", "DOUBLE", "QUEEN", "KING", "BUNK", "SOFA"];
@@ -124,18 +124,13 @@ export function RoomForm({
       <div className={grid}>
         <div>
           <label className={label}>{t("admin.hostels")} *</label>
-          <Select value={form.hostelId} onValueChange={(v) => set("hostelId", v)} dir={isRtl ? "rtl" : "ltr"}>
-            <SelectTrigger>
-              <SelectValue placeholder={t("admin.selectHostel")} />
-            </SelectTrigger>
-            <SelectContent>
-              {hostels.map((h) => (
-                <SelectItem key={h.id} value={h.id}>
-                  {h.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <NativeSelect value={form.hostelId} onChange={(v) => set("hostelId", v)} placeholder={t("admin.selectHostel")} dir={isRtl ? "rtl" : "ltr"}>
+            {hostels.map((h) => (
+              <option key={h.id} value={h.id}>
+                {h.label}
+              </option>
+            ))}
+          </NativeSelect>
         </div>
         <div>
           <label className={label}>{t("admin.roomName")} *</label>
@@ -147,18 +142,13 @@ export function RoomForm({
         </div>
         <div>
           <label className={label}>{t("common.type")} *</label>
-          <Select value={form.type} onValueChange={(v) => set("type", v)} dir={isRtl ? "rtl" : "ltr"}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {TYPES.map((ty) => (
-                <SelectItem key={ty} value={ty}>
-                  {t(`roomType.${ty}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <NativeSelect value={form.type} onChange={(v) => set("type", v)} dir={isRtl ? "rtl" : "ltr"}>
+            {TYPES.map((ty) => (
+              <option key={ty} value={ty}>
+                {t(`roomType.${ty}`)}
+              </option>
+            ))}
+          </NativeSelect>
         </div>
         <div>
           <label className={label}>{t("common.room")} {t("common.capacity")} *</label>
@@ -170,33 +160,23 @@ export function RoomForm({
         </div>
         <div>
           <label className={label}>{t("admin.bedType")} *</label>
-          <Select value={form.bedType} onValueChange={(v) => set("bedType", v)} dir={isRtl ? "rtl" : "ltr"}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {BEDS.map((b) => (
-                <SelectItem key={b} value={b}>
-                  {t(`bed.${b}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <NativeSelect value={form.bedType} onChange={(v) => set("bedType", v)} dir={isRtl ? "rtl" : "ltr"}>
+            {BEDS.map((b) => (
+              <option key={b} value={b}>
+                {t(`bed.${b}`)}
+              </option>
+            ))}
+          </NativeSelect>
         </div>
         <div>
           <label className={label}>{t("admin.bathroomType")} *</label>
-          <Select value={form.bathroomType} onValueChange={(v) => set("bathroomType", v)} dir={isRtl ? "rtl" : "ltr"}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {BATHS.map((b) => (
-                <SelectItem key={b} value={b}>
-                  {t(`bath.${b}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <NativeSelect value={form.bathroomType} onChange={(v) => set("bathroomType", v)} dir={isRtl ? "rtl" : "ltr"}>
+            {BATHS.map((b) => (
+              <option key={b} value={b}>
+                {t(`bath.${b}`)}
+              </option>
+            ))}
+          </NativeSelect>
         </div>
         <div>
           <label className={label}>{t("admin.pricePerNight")} *</label>

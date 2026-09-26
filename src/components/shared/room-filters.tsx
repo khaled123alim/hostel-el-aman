@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/components/providers/i18n-provider";
 import { ROOM_TYPES } from "@/lib/constants";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export function RoomFilters({
   initial,
@@ -55,68 +55,48 @@ export function RoomFilters({
     <form onSubmit={apply} className="card-surface grid gap-3 p-4 md:grid-cols-[1fr_1fr_1fr_1fr_auto]">
       <div>
         <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft">{t("filters.location")}</p>
-        <Select value={city} onValueChange={setCity}>
-          <SelectTrigger className={fieldCls}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("hero.any")}</SelectItem>
-            {cities.map((c) => (
-              <SelectItem key={c} value={c}>
-                {c}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <NativeSelect value={city} onChange={setCity} className={fieldCls}>
+          <option value="all">{t("hero.any")}</option>
+          {cities.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </NativeSelect>
       </div>
 
       <div>
         <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft">{t("filters.roomType")}</p>
-        <Select value={roomType} onValueChange={setRoomType}>
-          <SelectTrigger className={fieldCls}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="any">{t("hero.any")}</SelectItem>
-            {Object.keys(ROOM_TYPES).map((rt) => (
-              <SelectItem key={rt} value={rt}>
-                {t(`roomType.${rt}`)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <NativeSelect value={roomType} onChange={setRoomType} className={fieldCls}>
+          <option value="any">{t("hero.any")}</option>
+          {Object.keys(ROOM_TYPES).map((rt) => (
+            <option key={rt} value={rt}>
+              {t(`roomType.${rt}`)}
+            </option>
+          ))}
+        </NativeSelect>
       </div>
 
       <div>
         <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft">{t("filters.guests")}</p>
-        <Select value={guests} onValueChange={setGuests}>
-          <SelectTrigger className={fieldCls}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-              <SelectItem key={n} value={String(n)}>
-                {n}+ {t("common.guests")}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <NativeSelect value={guests} onChange={setGuests} className={fieldCls}>
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+            <option key={n} value={String(n)}>
+              {n}+ {t("common.guests")}
+            </option>
+          ))}
+        </NativeSelect>
       </div>
 
       <div>
         <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-ink-soft">{t("filters.sortBy")}</p>
-        <Select value={sort} onValueChange={setSort}>
-          <SelectTrigger className={fieldCls}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {sortOptions.map((o) => (
-              <SelectItem key={o.value} value={o.value}>
-                {o.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <NativeSelect value={sort} onChange={setSort} className={fieldCls}>
+          {sortOptions.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </NativeSelect>
       </div>
 
       <div className="flex items-end">

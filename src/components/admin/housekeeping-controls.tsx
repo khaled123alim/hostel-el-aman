@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useI18n } from "@/components/providers/i18n-provider";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { NativeSelect } from "@/components/ui/native-select";
 
 const STATUSES = ["CLEAN", "DIRTY", "CLEANING", "INSPECTED", "OUT_OF_ORDER"];
 
@@ -51,18 +51,13 @@ export function HousekeepingControls({ roomId, isRtl }: { roomId: string; isRtl:
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Select value={status} onValueChange={setStatus} dir={isRtl ? "rtl" : "ltr"}>
-        <SelectTrigger className="min-w-36">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
+      <NativeSelect value={status} onChange={setStatus} className="min-w-36" dir={isRtl ? "rtl" : "ltr"}>
           {STATUSES.map((s) => (
-            <SelectItem key={s} value={s}>
+            <option key={s} value={s}>
               {t(`status.${s}`)}
-            </SelectItem>
+            </option>
           ))}
-        </SelectContent>
-      </Select>
+        </NativeSelect>
       <input
         value={note}
         onChange={(e) => setNote(e.target.value)}

@@ -6,7 +6,7 @@ import { SlidersHorizontal, MapPin, Users, BedDouble, X } from "lucide-react";
 import { useI18n } from "@/components/providers/i18n-provider";
 import { cn } from "@/lib/utils";
 import { ROOM_TYPES } from "@/lib/constants";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export interface HostelFilterValue {
   destination?: string;
@@ -288,18 +288,13 @@ export function HostelSortBar({ initial, resultCount }: { initial: HostelFilterV
       </p>
       <div className="flex items-center gap-2 text-sm text-ink-soft">
         <span className="hidden sm:inline">{t("filters.sortBy")}:</span>
-        <Select value={initial.sort ?? "recommended"} onValueChange={(v) => push({ sort: v })}>
-          <SelectTrigger className="h-9 w-[190px] rounded-lg">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map((o) => (
-              <SelectItem key={o.value} value={o.value}>
-                {o.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <NativeSelect value={initial.sort ?? "recommended"} onChange={(v) => push({ sort: v })} className="h-9 w-[190px]">
+          {options.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))}
+        </NativeSelect>
       </div>
     </div>
   );

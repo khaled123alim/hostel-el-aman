@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useI18n } from "@/components/providers/i18n-provider";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { NativeSelect } from "@/components/ui/native-select";
 
 interface Values {
   name: string;
@@ -114,15 +114,10 @@ export function PromotionForm({
         </div>
         <div>
           <label className={label}>{t("common.type")} *</label>
-          <Select value={form.type} onValueChange={(v) => set("type", v)} dir={isRtl ? "rtl" : "ltr"}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="PERCENTAGE">% {t("admin.percentage")}</SelectItem>
-              <SelectItem value="FIXED">{t("admin.fixedAmount")}</SelectItem>
-            </SelectContent>
-          </Select>
+          <NativeSelect value={form.type} onChange={(v) => set("type", v)} dir={isRtl ? "rtl" : "ltr"}>
+              <option value="PERCENTAGE">% {t("admin.percentage")}</option>
+              <option value="FIXED">{t("admin.fixedAmount")}</option>
+            </NativeSelect>
         </div>
         <div>
           <label className={label}>{form.type === "PERCENTAGE" ? "% Value" : t("common.amount")}</label>
@@ -149,15 +144,10 @@ export function PromotionForm({
         </div>
         <div>
           <label className={label}>{t("admin.status")}</label>
-          <Select value={form.status} onValueChange={(v) => set("status", v)} dir={isRtl ? "rtl" : "ltr"}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ACTIVE">{t("admin.active")}</SelectItem>
-              <SelectItem value="INACTIVE">{t("admin.inactive")}</SelectItem>
-            </SelectContent>
-          </Select>
+          <NativeSelect value={form.status} onChange={(v) => set("status", v)} dir={isRtl ? "rtl" : "ltr"}>
+              <option value="ACTIVE">{t("admin.active")}</option>
+              <option value="INACTIVE">{t("admin.inactive")}</option>
+            </NativeSelect>
         </div>
         <div>
           <label className={label}>{t("admin.startDate")} *</label>

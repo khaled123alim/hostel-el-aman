@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useI18n } from "@/components/providers/i18n-provider";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { NativeSelect } from "@/components/ui/native-select";
 
 type Ov = {
   id: string;
@@ -86,18 +86,13 @@ export function AvailabilityManager({
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-ink-soft">{t("admin.status")}</label>
-          <Select value={status} onValueChange={(v) => setStatus(v as (typeof STATUSES)[number])} dir={isRtl ? "rtl" : "ltr"}>
-            <SelectTrigger className="min-w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {STATUSES.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {t(`status.${s}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <NativeSelect value={status} onChange={(v) => setStatus(v as (typeof STATUSES)[number])} className="min-w-40" dir={isRtl ? "rtl" : "ltr"}>
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {t(`status.${s}`)}
+              </option>
+            ))}
+          </NativeSelect>
         </div>
         <div>
           <label className="mb-1.5 block text-xs font-medium text-ink-soft">{t("admin.priceOverride")}</label>
